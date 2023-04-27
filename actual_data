@@ -31,3 +31,8 @@ plt.plot(min_kl_div_dist, label='Minimum KL Divergence', linewidth=3, linestyle=
 plt.legend()
 plt.title(f'Minimum KL Divergence: {min_kl_div:.6f}')
 plt.show()
+
+# Print KL divergences for all distributions
+divdistsorted = find_all_kl_divergences(distributions, target_distribution)
+for dist_idx, kl_div in divdistsorted.items():
+    print(f'Distribution {dist_idx}: {kl_div:.6f}')
