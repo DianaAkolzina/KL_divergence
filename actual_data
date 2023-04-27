@@ -1,0 +1,33 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from random_data import (generate_distributions, kl_divergence, find_min_kl_divergence,
+                                  find_all_kl_divergences)
+
+# Load actual data
+data = pd.read_csv('Iris.csv')
+data = data.drop(['Id', 'Species'], axis=1)  # Remove unnecessary columns
+
+# Normalize the data to create a probability distribution
+target_distribution = data.mean(axis=0).values
+target_distribution /= target_distribution.sum()
+
+# Generate 20 different binomial distributions 
+# Could also use the method for generating dirichlet distributions from the random_data.py
+num_distributions = 20
+num_samples = len(target_distribution)
+distributions = [np.random.binomial(1, p, num_samples) for p in np.linspace(0.01, 0.99, num_distributions)]
+
+# Normalize the generated distributions
+distributions = [dist / dist.sum() for dist in distributions]
+
+# Find the distribution with minimum KL divergence
+min_kl_div_dist, min_kl_div = find_min_kl_divergence(distributions, target_distribution)
+
+# Plot the target distribution and the distribution with minimum KL divergence
+plt.figure(figsize=(12, 6))
+plt.plot(target_distribution, label='Target Distribution', linewidth=3, linestyle='--')
+plt.plot(min_kl_div_dist, label='Minimum KL Divergence', linewidth=3, linestyle=':')
+plt.legend()
+plt.title(f'Minimum KL Divergence: {min_kl_div:.6f}')
+plt.show()
