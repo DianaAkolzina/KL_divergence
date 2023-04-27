@@ -1,0 +1,85 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import entropy
+
+# Generate random distributions
+def generate_distributions(num_distributions, num_samples):
+    distributions = []
+    for i in range(num_distributions):
+        dist = np.random.dirichlet(np.ones(num_samples), size=1)
+        distributions.append(dist.flatten())
+    return distributions
+
+# Calculate KL divergence
+def kl_divergence(p, q):
+    return np.sum(np.where(p != 0, p * np.log(p / q), 0))
+
+# Find the distribution with minimum KL divergence
+def find_min_kl_divergence(distributions, target_distribution):
+    min_kl_div = np.inf
+    min_kl_div_dist = None
+    for dist in distributions:
+        kl_div = kl_divergence(target_distribution, dist)
+        if kl_div < min_kl_div:
+            min_kl_div = kl_div
+            min_kl_div_dist = dist
+    return min_kl_div_dist, min_kl_div
+
+
+# Find the distribution with minimum KL divergence
+def find_all_kl_divergences(distributions, target_distribution):
+    all_dists_with_divs  = {}
+    i = 1
+    for curr_dist in distributions:
+        curr_div = kl_divergence(target_distribution, curr_dist)
+        all_dists_with_divs[i] = curr_div
+        i+=1
+    return all_dists_with_divs
+
+# Generate random distributions
+
+num_distributions = 4
+num_samples = 100
+distributions = generate_distributions(num_distributions, num_samples)
+
+# Specify the target distribution
+'''Draw samples from the Dirichlet distribution.
+
+Draw size samples of dimension k from a Dirichlet
+ distribution. A Dirichlet-distributed random variable 
+ can be seen as a multivariate generalization of a Beta
+  distribution. The Dirichlet distribution is a conjugate
+   prior of a multinomial distribution in Bayesian inference.'''
+
+target_distribution = np.random.dirichlet(np.ones(num_samples), size=1).flatten()
+
+# Find the distribution with minimum KL divergence
+min_kl_div_dist, min_kl_div = find_min_kl_divergence(distributions, target_distribution)
+
+divdist = find_all_kl_divergences(distributions, target_distribution)
+sorted_value_index = np.argsort(divdist.values())
+dictionary_keys = list(divdist.keys())
+divdistsorted = {dictionary_keys[i]:sorted(divdist.values())[i] for i in range(len(dictionary_keys))}
+
+# Plot the distributions
+plt.figure(figsize=(12, 6))
+for i, dist in enumerate(distributions):
+    plt.plot(dist, label=f'Distribution {i+1}')
+plt.plot(target_distribution, label='Target Distribution', linewidth=3, linestyle='--')
+plt.plot(min_kl_div_dist, label='Minimum KL Divergence', linewidth=3, linestyle=':')
+plt.legend()
+plt.title(f'Minimum KL Divergence: {min_kl_div:.6f}')
+plt.show()
+
+plt.figure(figsize=(12, 6))
+plt.plot(target_distribution, label='Target Distribution', linewidth=3, linestyle='--')
+plt.plot(min_kl_div_dist, label='Minimum KL Divergence', linewidth=3, linestyle=':')
+plt.legend()
+plt.title(f'Minimum KL Divergence: {min_kl_div:.6f}')
+plt.show()
+
+for x in divdistsorted:
+    print (x)
+    print(divdistsorted[x])
+
+
