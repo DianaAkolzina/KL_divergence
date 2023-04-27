@@ -23,6 +23,8 @@ The KL divergence is a measure of how one probability distribution differs from 
 
 After calculating the KL divergence for each distribution, the script finds the distribution with the minimum KL divergence and plots all the distributions. The KL divergences for each distribution are also printed.
 
+The actual data file does these with the famous Iris dataset. 
+
 ## Applications
 
 - In information theory, KL divergence is used to quantify the difference between two probability distributions, providing insights into the relative entropy or information gain.
